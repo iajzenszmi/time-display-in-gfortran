@@ -1,0 +1,129 @@
+program time_date_demo
+    implicit none
+    integer :: year, month, day, hour, minute, second, zone
+    character(len=8) :: date_string, time_string
+
+    ! Use date_and_time to get the current date and time
+    call date_and_time(date_string, time_string, zone)
+
+    ! Parse the date and time strings into integers
+    year = int(date_string(1:4))
+    month = int(date_string(5:6))
+    day = int(date_string(7:8))
+    hour = int(time_string(1:2))
+    minute = int(time_string(3:4))
+    second = int(time_string(5:6))
+
+    ! Display the results
+    print *, "Current Date:"
+    print *, "Year: ", year
+    print *, "Month: ", month
+    print *, "Day: ", day
+    print *, ""
+    print *, "Current Time:"
+    print *, "Hour: ", hour
+    print *, "Minute: ", minute
+    print *, "Second: ", second
+
+end program time_date_demo
+
+Explanation:
+
+    date_and_time(date_string, time_string, zone) is used to retrieve the current date and time.
+    date_string contains the date in YYYYMMDD format.
+    time_string contains the time in HHMMSS format.
+    The program extracts and prints the year, month, day, hour, minute, and second separately.
+
+You said:
+ian@ian-Aspire-One-753:~/Downloads/NR/nr_full304/legacy/nr2/f77_210/examples$ gfortran mytime.f -std=legacy -ffree-form -o mytime
+mytime.f:7:49:
+
+    7 | _time(date_string, time_string, zone)
+      |                                1
+
+Error: ‘zone’ argument of ‘date_and_time’ intrinsic at (1) must be CHARACTER
+mytime.f:10:15:
+
+   10 |     year = int(date_string(1:4))
+      |               1
+Error: ‘a’ argument of ‘int’ intrinsic at (1) must have a numeric type
+mytime.f:11:16:
+
+   11 |     month = int(date_string(5:6))
+      |                1
+Error: ‘a’ argument of ‘int’ intrinsic at (1) must have a numeric type
+mytime.f:12:14:
+
+   12 |     day = int(date_string(7:8))
+      |              1
+Error: ‘a’ argument of ‘int’ intrinsic at (1) must have a numeric type
+mytime.f:13:15:
+
+   13 |     hour = int(time_string(1:2))
+      |               1
+Error: ‘a’ argument of ‘int’ intrinsic at (1) must have a numeric type
+mytime.f:14:17:
+
+   14 |     minute = int(time_string(3:4))
+      |                 1
+Error: ‘a’ argument of ‘int’ intrinsic at (1) must have a numeric type
+mytime.f:15:17:
+
+   15 |     second = int(time_string(5:6))
+      |                 1
+Error: ‘a’ argument of ‘int’ intrinsic at (1) must have a numeric type
+ian@ian-Aspire-One-753:~/Downloads/NR/nr_full304/legacy/nr2/f77_210/examples$ 
+ChatGPT said:
+ChatGPT
+
+The error messages you're encountering are due to type mismatches and incorrect handling of the zone argument in the date_and_time subroutine. Here’s an updated version of the code that should resolve these issues:
+
+    The zone argument should be a character variable, not an integer.
+    The int intrinsic function cannot convert character substrings directly to integers, so we'll use read to convert the substrings to integers instead.
+
+Here’s the corrected version:
+
+program time_date_demo
+    implicit none
+    integer :: year, month, day, hour, minute, second
+    character(len=8) :: date_string, time_string
+    character(len=5) :: zone
+
+    ! Use date_and_time to get the current date and time
+    call date_and_time(date_string, time_string, zone)
+
+    ! Convert the date and time strings into integers
+    read(date_string(1:4), *) year
+    read(date_string(5:6), *) month
+    read(date_string(7:8), *) day
+    read(time_string(1:2), *) hour
+    read(time_string(3:4), *) minute
+    read(time_string(5:6), *) second
+
+    ! Display the results
+    print *, "Current Date:"
+    print *, "Year: ", year
+    print *, "Month: ", month
+    print *, "Day: ", day
+    print *, ""
+    print *, "Current Time:"
+    print *, "Hour: ", hour
+    print *, "Minute: ", minute
+    print *, "Second: ", second
+
+end program time_date_demo
+
+Explanation of Changes:
+
+    zone is declared as character(len=5) instead of integer.
+    Each substring (e.g., date_string(1:4)) is converted to an integer using read, which is more suitable for handling character-to-integer conversions in Fortran.
+
+Compilation
+
+Now try compiling with the same command:
+
+gfortran mytime.f -std=legacy -ffree-form -o mytime
+
+This should work without errors. Let me know if you encounter any further issues!
+
+
